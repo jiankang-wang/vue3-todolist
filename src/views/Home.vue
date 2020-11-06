@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light mb-4">
       <a class="navbar-brand d-flex align-item-center" href="#">
         <div class="logo mr-2"></div>
         <span>toDoList</span>
