@@ -20,11 +20,23 @@ export default createStore({
     check (state, id) {
       const index = state.todos.findIndex((item) => item.id === id)
       state.todos[index].state = state.todos[index].state === TodoItemState.DONE ? TodoItemState.OPEN : TodoItemState.DONE
+    },
+    remove (state, id) {
+      const index = state.todos.findIndex((item) => item.id === id)
+      state.todos[index].state = TodoItemState.DELETE
+    },
+    clear (state, type: TodoItemState) {
+      state.todos = state.todos.filter(item => item.state !== type)
     }
   },
   actions: {
   },
   modules: {
+  },
+  getters: {
+    dones: state => state.todos.filter(item => item.state === TodoItemState.DONE),
+    deletes: state => state.todos.filter(item => item.state === TodoItemState.DELETE),
+    opens: state => state.todos.filter(item => item.state === TodoItemState.OPEN)
   },
   plugins: debug ? [createLogger()] : []
 })

@@ -12,11 +12,11 @@
           >
         </div>
         <div class="col-4">
-          <select name="" id="" class="form-control">
-            <option value="">选择已过滤.....</option>
-            <option value="">代办中</option>
-            <option value="">已完成</option>
-            <option value="">已删除</option>
+          <select name="" id="" class="form-control" v-model="filterState">
+            <option :value="TodoItemState.ALL">选择已过滤.....</option>
+            <option :value="TodoItemState.OPEN">代办中</option>
+            <option :value="TodoItemState.DONE">已完成</option>
+            <option :value="TodoItemState.DELETE">已删除</option>
           </select>
         </div>
       </div>
@@ -50,10 +50,13 @@
           :class="{'d-none': item.state !== TodoItemState.OPEN}"
         >
           <button type="button" class="btn btn-warning btn-sm mr-2 text-light">编辑</button>
-          <button type="button" class="btn btn-danger btn-sm">删除</button>
+          <button type="button" class="btn btn-danger btn-sm" @click.stop="remove(item.id)">删除</button>
         </div>
       </li>
     </div>
+    <button type="button" class="btn btn-danger float-right mt-4" @click="hide">
+      {{ filterState === TodoItemState.OPEN ? '显示所有' : '隐藏已完成' }}
+    </button>
   </div>
 </template>
 
@@ -66,19 +69,42 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 export default defineComponent({
   setup () {
     const inputValue = ref('')
+    const filterState = ref(TodoItemState.ALL)
     const add = () => {
       store.commit('add', inputValue)
       inputValue.value = ''
     }
     const check = (item: TodoItem) => {
-      store.commit('check', item.id)
+      if ((item.state === TodoItemState.OPEN) || (item.state === TodoItemState.DONE)) {
+        store.commit('check', item.id)
+      }
     }
+    const remove = (id: string) => {
+      store.commit('remove', id)
+    }
+    const filterItem = (value: TodoItemState) => {
+      if (value === TodoItemState.ALL) {
+        return store.state.todos
+      }
+      return store.state.todos.filter(item => item.state === value)
+    }
+    const hide = () => {
+      if (filterState.value === TodoItemState.OPEN) {
+        filterState.value = TodoItemState.ALL
+      } else {
+        filterState.value = TodoItemState.OPEN
+      }
+    }
+
     return reactive({
       inputValue,
       add,
-      todos: computed(() => store.state.todos),
+      todos: computed(() => filterItem(filterState.value)),
       TodoItemState,
-      check
+      check,
+      remove,
+      filterState,
+      hide
     })
   }
 })
