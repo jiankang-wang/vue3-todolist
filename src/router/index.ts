@@ -21,7 +21,18 @@ const routes: Array<RouteRecordRaw> = [
       { path: '', redirect: { name: 'add' } },
       { path: '/add', name: 'add', component: Add },
       { path: '/delete', name: 'selete', component: Delete },
-      { path: '/edit', name: 'edit', component: Edit },
+      {
+        path: '/edit',
+        name: 'edit',
+        component: Edit,
+        beforeEnter: (to, from, next) => {
+          if (from.path === '/add') {
+            next()
+          } else {
+            next('add')
+          }
+        }
+      },
       { path: '/done', name: 'done', component: Done }
     ]
   }

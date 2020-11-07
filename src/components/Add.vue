@@ -42,14 +42,14 @@
             :for="item.id"
             :class="{ 'text-black-50 line-through': item.state === TodoItemState.DONE }"
           >
-            {{ item }}
+            {{ item.text }}
           </label>
         </div>
         <div
           class="float-right ctrls"
           :class="{'d-none': item.state !== TodoItemState.OPEN}"
         >
-          <button type="button" class="btn btn-warning btn-sm mr-2 text-light">编辑</button>
+          <button type="button" class="btn btn-warning btn-sm mr-2 text-light" @click.stop="edit(item)">编辑</button>
           <button type="button" class="btn btn-danger btn-sm" @click.stop="remove(item.id)">删除</button>
         </div>
       </li>
@@ -62,6 +62,7 @@
 
 <script lang="ts">
 import store from '@/store'
+import router from '@/router'
 import { TodoItemState } from '@/common/const'
 import { TodoItem } from '@/common/interfacce'
 import { defineComponent, ref, reactive, computed } from 'vue'
@@ -71,7 +72,7 @@ export default defineComponent({
     const inputValue = ref('')
     const filterState = ref(TodoItemState.ALL)
     const add = () => {
-      store.commit('add', inputValue)
+      store.commit('add', inputValue.value)
       inputValue.value = ''
     }
     const check = (item: TodoItem) => {
@@ -95,7 +96,10 @@ export default defineComponent({
         filterState.value = TodoItemState.OPEN
       }
     }
-
+    const edit = (item: TodoItem) => {
+      store.commit('saveEditItem', item)
+      router.push({ name: 'edit' })
+    }
     return reactive({
       inputValue,
       add,
@@ -104,7 +108,8 @@ export default defineComponent({
       check,
       remove,
       filterState,
-      hide
+      hide,
+      edit
     })
   }
 })

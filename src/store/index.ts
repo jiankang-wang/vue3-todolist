@@ -7,7 +7,8 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default createStore({
   state: {
-    todos: [] as TodoItem[]
+    todos: [] as TodoItem[],
+    item: {} as TodoItem
   },
   mutations: {
     add (state, value) {
@@ -27,6 +28,13 @@ export default createStore({
     },
     clear (state, type: TodoItemState) {
       state.todos = state.todos.filter(item => item.state !== type)
+    },
+    saveEditItem (state, item: TodoItem) {
+      state.item = item
+    },
+    update (state, item: TodoItem) {
+      const index = state.todos.findIndex(ele => ele.id === item.id)
+      state.todos[index] = item
     }
   },
   actions: {
